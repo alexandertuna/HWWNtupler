@@ -63,8 +63,8 @@ c.setalg("JetCalibrator", { "m_name"                   : "AntiKt4TopoEM",
 c.setalg("JetSelector", { "m_name"                    :  "preSelJetsEMTopoJets",
                           "m_inContainerName"         :  "AntiKt4EMTopoJets_Calib",
                           "m_inputAlgo"               :  "AntiKt4EMTopoJets_Calib_Algo",
-                          "m_outContainerName"        :  "AntiKt4EMTopoJets_Calib_preSel",
-                          "m_outputAlgo"              :  "AntiKt4EMTopoJets_Calib_preSel_Algo",
+                          "m_outContainerName"        :  "AntiKt4EMTopoJets_Calib_Presel",
+                          "m_outputAlgo"              :  "AntiKt4EMTopoJets_Calib_Presel_Algo",
                           "m_decorateSelectedObjects" :  False, 
                           "m_createSelectedContainer" :  True, 
                           "m_cleanJets"               :  False, 
@@ -76,8 +76,8 @@ c.setalg("JetSelector", { "m_name"                    :  "preSelJetsEMTopoJets",
                           } )
 
 # c.setalg("BJetEfficiencyCorrector", { "m_name"                    : "BJetEffCor_AntiKt4EMTopoJets",
-#                                       "m_inContainerName"         : "AntiKt4EMTopoJets_Calib_preSel",
-#                                       "m_inputAlgo"               : "AntiKt4EMTopoJets_Calib_preSel_Algo",
+#                                       "m_inContainerName"         : "AntiKt4EMTopoJets_Calib_Presel",
+#                                       "m_inputAlgo"               : "AntiKt4EMTopoJets_Calib_Presel_Algo",
 #                                       "m_debug"                   : False, 
 #                                       # a bit special for b-tagging SF, since "Nominal" will NOT be converted to "" internally
 #                                       "m_systName"                : ("" if systName == "Nominal" else systName),   
@@ -93,7 +93,7 @@ c.setalg("JetSelector", { "m_name"                    :  "preSelJetsEMTopoJets",
 #                                       } )
 
 # muon calibrators and selectors
-c.setalg("MuonCalibrator", { "m_name"                : "Muons", 
+c.setalg("MuonCalibrator", { "m_name"                : "MuonCalibrator", 
                              "m_inContainerName"     : "Muons", 
                              "m_outContainerName"    : "Muons_Calib", 
                              "m_outputAlgoSystNames" : "MuonCalibrator_Syst",
@@ -109,6 +109,24 @@ c.setalg("MuonSelector", { "m_name"                    : "MuonSelector",
                            "m_muonType"                : "Combined",
                            "m_muonQualityStr"          : "Medium",
                            } )
+
+# electron calibrators and selectors
+c.setalg("ElectronCalibrator", { "m_name"                : "ElectronCalibrator", 
+                                 "m_inContainerName"     : "Electrons", 
+                                 "m_outContainerName"    : "Electrons_Calib", 
+                                 "m_outputAlgoSystNames" : "ElectronCalibrator_Syst",
+                                 "m_esModel"             : "es2015PRE",
+                                 "m_decorrelationModel"  : "FULL_ETACORRELATED_v1",
+                                 "m_debug"               : False,
+                                 } )
+
+c.setalg("ElectronSelector", { "m_name"                    : "ElectronSelector", 
+                               "m_inContainerName"         : "Electrons_Calib", 
+                               "m_outContainerName"        : "Electrons_Selected", 
+                               "m_createSelectedContainer" : True,
+                               "m_pT_min"                  : 8*1000,
+                               "m_eta_max"                 : 2.5,
+                               } )
 
 # MET builder
 # c.setalg("METConstructor", {"m_name"                  : "METBuilding",
@@ -130,7 +148,7 @@ c.setalg("Ntuple", { "m_name"                       : "Ntupler",
                      "m_inTruthParticleName"        : "TruthParticles",
                      "m_container_muons"            : "Muons_Selected", 
                      "m_container_electrons"        : "Electrons_Selected", 
-                     "m_container_jets"             : "AntiKt4EMTopoJets_Calib_preSel", 
+                     "m_container_jets"             : "AntiKt4EMTopoJets_Calib_Presel", 
                      } )
 
 

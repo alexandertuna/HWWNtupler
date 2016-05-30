@@ -137,6 +137,15 @@ EL::StatusCode Ntuple::AddTree(string syst = "")
   tree->Branch("el_ptcone30", &b_el_ptcone30);
   tree->Branch("el_ptcone40", &b_el_ptcone40);
 
+  tree->Branch("jet_ak4em_n",      &b_jet_ak4em_n);
+  tree->Branch("jet_ak4em_pt",     &b_jet_ak4em_pt);
+  tree->Branch("jet_ak4em_eta",    &b_jet_ak4em_eta);
+  tree->Branch("jet_ak4em_phi",    &b_jet_ak4em_phi);
+  tree->Branch("jet_ak4em_m",      &b_jet_ak4em_m);
+  tree->Branch("jet_ak4em_mv2c00", &b_jet_ak4em_mv2c00);
+  tree->Branch("jet_ak4em_mv2c10", &b_jet_ak4em_mv2c10);
+  tree->Branch("jet_ak4em_mv2c20", &b_jet_ak4em_mv2c10);
+
   tree->Branch("weight",    &m_weight,    "weight/F");
   tree->Branch("weight_xs", &m_weight_xs, "weight_xs/F");
 
@@ -222,14 +231,18 @@ EL::StatusCode Ntuple::executeSingle(string syst, bool countEvents) {
   if(m_helpTree.find(syst) == m_helpTree.end())
       AddTree(syst);
 
-  const xAOD::EventInfo*       eventInfo(0);
-  const xAOD::MuonContainer*       muons(0);
-  const xAOD::VertexContainer*  vertices(0);
-  const xAOD::Vertex*               pv = 0;
+  const xAOD::EventInfo*         eventInfo(0);
+  const xAOD::MuonContainer*         muons(0);
+  const xAOD::ElectronContainer* electrons(0);
+  const xAOD::JetContainer*     jets_ak4em(0);
+  const xAOD::VertexContainer*    vertices(0);
+  const xAOD::Vertex*                 pv = 0;
 
-  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(eventInfo, "EventInfo",       m_event, m_store), "");
-  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(muons,     "Muons",           m_event, m_store), "");
-  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(vertices,  "PrimaryVertices", m_event, m_store), "");
+  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(eventInfo,  "EventInfo",           m_event, m_store), "");
+  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(vertices,   "PrimaryVertices",     m_event, m_store), "");
+  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(muons,      m_container_muons,     m_event, m_store), "");
+  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(electrons,  m_container_electrons, m_event, m_store), "");
+  RETURN_CHECK("Ntuple::execute()", HelperFunctions::retrieve(jets_ak4em, m_container_jets,      m_event, m_store), "");
   pv = vertices->at(HelperFunctions::getPrimaryVertexLocation(vertices));
 
   //  only fill ntup if:
@@ -268,7 +281,29 @@ EL::StatusCode Ntuple::executeSingle(string syst, bool countEvents) {
   }
 
   // electrons
+  for (auto electron: *electrons){
+      b_el_n++;
+      b_el_pt       .push_back(electron->pt());
+      b_el_eta      .push_back(electron->eta());
+      b_el_phi      .push_back(electron->phi());
+      b_el_m        .push_back(electron->m());
+      b_el_ptcone20 .push_back(electron->isolation(xAOD::Iso::ptcone20));
+      b_el_ptcone30 .push_back(electron->isolation(xAOD::Iso::ptcone30));
+      b_el_ptcone40 .push_back(electron->isolation(xAOD::Iso::ptcone40));
+  }
+
   // jets
+  for (auto jet: *jets_ak4em){
+      b_jet_ak4em_n++;
+      b_jet_ak4em_pt     .push_back(jet->pt());
+      b_jet_ak4em_eta    .push_back(jet->eta());
+      b_jet_ak4em_phi    .push_back(jet->phi());
+      b_jet_ak4em_m      .push_back(jet->m());
+      b_jet_ak4em_mv2c00 .push_back(0.0);
+      b_jet_ak4em_mv2c10 .push_back(0.0);
+      b_jet_ak4em_mv2c20 .push_back(0.0);
+  }
+
   // met
 
   // fill the tree
