@@ -3,7 +3,7 @@
 To get started, try:
 
 ```bash
-rel="2.3.45"
+rel="2.4.10"
 rcSetup Base,${rel}
 
 git clone git@github.com:UCATLAS/xAODAnaHelpers.git
