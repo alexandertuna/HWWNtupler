@@ -120,12 +120,13 @@ c.setalg("ElectronCalibrator", { "m_name"                : "ElectronCalibrator",
                                  "m_debug"               : False,
                                  } )
 
-c.setalg("ElectronSelector", { "m_name"                    : "ElectronSelector", 
-                               "m_inContainerName"         : "Electrons_Calib", 
-                               "m_outContainerName"        : "Electrons_Selected", 
+c.setalg("ElectronSelector", { "m_name"                    : "ElectronSelector",
+                               "m_inContainerName"         : "Electrons_Calib",
+                               "m_outContainerName"        : "Electrons_Selected",
                                "m_createSelectedContainer" : True,
                                "m_pT_min"                  : 8*1000,
                                "m_eta_max"                 : 2.5,
+                               "m_LHOperatingPoint"        : "VeryLoose",
                                } )
 
 # MET builder

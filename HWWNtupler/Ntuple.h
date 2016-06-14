@@ -61,9 +61,24 @@ public:
   std::vector<float> b_el_eta;
   std::vector<float> b_el_phi;
   std::vector<float> b_el_m;
+  std::vector<float> b_el_LHVeryLoose;
+  std::vector<float> b_el_LHLoose;
+  std::vector<float> b_el_LHMedium;
+  std::vector<float> b_el_LHTight;
   std::vector<float> b_el_ptcone20;
   std::vector<float> b_el_ptcone30;
   std::vector<float> b_el_ptcone40;
+  std::vector<float> b_el_ptvarcone20;
+  std::vector<float> b_el_ptvarcone30;
+  std::vector<float> b_el_ptvarcone40;
+  std::vector<float> b_el_topoetcone20;
+  std::vector<float> b_el_topoetcone30;
+  std::vector<float> b_el_topoetcone40;
+  std::vector<float> b_el_IsoLooseTrackOnly;
+  std::vector<float> b_el_IsoLoose;
+  std::vector<float> b_el_IsoTight;
+  std::vector<float> b_el_IsoGradient;
+  std::vector<float> b_el_IsoGradientLoose;
 
   // jets
   int                b_jet_ak4em_n;

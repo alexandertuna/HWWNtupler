@@ -128,14 +128,29 @@ EL::StatusCode Ntuple::AddTree(string syst = "")
   tree->Branch("mu_ptcone30", &b_mu_ptcone30);
   tree->Branch("mu_ptcone40", &b_mu_ptcone40);
 
-  tree->Branch("el_n",        &b_el_n);
-  tree->Branch("el_pt",       &b_el_pt);
-  tree->Branch("el_eta",      &b_el_eta);
-  tree->Branch("el_phi",      &b_el_phi);
-  tree->Branch("el_m",        &b_el_m);
-  tree->Branch("el_ptcone20", &b_el_ptcone20);
-  tree->Branch("el_ptcone30", &b_el_ptcone30);
-  tree->Branch("el_ptcone40", &b_el_ptcone40);
+  tree->Branch("el_n",                 &b_el_n);
+  tree->Branch("el_pt",                &b_el_pt);
+  tree->Branch("el_eta",               &b_el_eta);
+  tree->Branch("el_phi",               &b_el_phi);
+  tree->Branch("el_m",                 &b_el_m);
+  tree->Branch("el_LHVeryLoose",       &b_el_LHVeryLoose);
+  tree->Branch("el_LHLoose",           &b_el_LHLoose);
+  tree->Branch("el_LHMedium",          &b_el_LHMedium);
+  tree->Branch("el_LHTight",           &b_el_LHTight);
+  tree->Branch("el_ptcone20",          &b_el_ptcone20);
+  tree->Branch("el_ptcone30",          &b_el_ptcone30);
+  tree->Branch("el_ptcone40",          &b_el_ptcone40);
+  tree->Branch("el_ptvarcone20",       &b_el_ptvarcone20);
+  tree->Branch("el_ptvarcone30",       &b_el_ptvarcone30);
+  tree->Branch("el_ptvarcone40",       &b_el_ptvarcone40);
+  tree->Branch("el_topoetcone20",      &b_el_topoetcone20);
+  tree->Branch("el_topoetcone30",      &b_el_topoetcone30);
+  tree->Branch("el_topoetcone40",      &b_el_topoetcone40);
+  tree->Branch("el_IsoLooseTrackOnly", &b_el_IsoLooseTrackOnly);
+  tree->Branch("el_IsoLoose",          &b_el_IsoLoose);
+  tree->Branch("el_IsoTight",          &b_el_IsoTight);
+  tree->Branch("el_IsoGradient",       &b_el_IsoGradient);
+  tree->Branch("el_IsoGradientLoose",  &b_el_IsoGradientLoose);
 
   tree->Branch("jet_ak4em_n",      &b_jet_ak4em_n);
   tree->Branch("jet_ak4em_pt",     &b_jet_ak4em_pt);
@@ -170,13 +185,28 @@ EL::StatusCode Ntuple::ClearBranches()
     b_mu_ptcone40 .clear();
 
     b_el_n = 0;
-    b_el_pt       .clear();
-    b_el_eta      .clear();
-    b_el_phi      .clear();
-    b_el_m        .clear();
-    b_el_ptcone20 .clear();
-    b_el_ptcone30 .clear();
-    b_el_ptcone40 .clear();
+    b_el_pt               .clear();
+    b_el_eta              .clear();
+    b_el_phi              .clear();
+    b_el_m                .clear();
+    b_el_LHVeryLoose      .clear();
+    b_el_LHLoose          .clear();
+    b_el_LHMedium         .clear();
+    b_el_LHTight          .clear();
+    b_el_ptcone20         .clear();
+    b_el_ptcone30         .clear();
+    b_el_ptcone40         .clear();
+    b_el_ptvarcone20      .clear();
+    b_el_ptvarcone30      .clear();
+    b_el_ptvarcone40      .clear();
+    b_el_topoetcone20     .clear();
+    b_el_topoetcone30     .clear();
+    b_el_topoetcone40     .clear();
+    b_el_IsoLooseTrackOnly.clear();
+    b_el_IsoLoose         .clear();
+    b_el_IsoTight         .clear();
+    b_el_IsoGradient      .clear();
+    b_el_IsoGradientLoose .clear();
 
     b_jet_ak4em_n = 0;
     b_jet_ak4em_pt     .clear();
@@ -268,6 +298,15 @@ EL::StatusCode Ntuple::executeSingle(string syst, bool countEvents) {
   if(m_debug) cout << " Filling trigger " << endl;  
   m_helpTree[syst]->FillTrigger( eventInfo );
 
+  // leptons
+  static SG::AuxElement::Accessor<char>  AccessorIsoLooseTrackOnly ("isIsolated_FixedCutTightTrackOnly");
+  static SG::AuxElement::Accessor<char>  AccessorIsoLoose          ("isIsolated_FixedCutLoose");
+  static SG::AuxElement::Accessor<char>  AccessorIsoTight          ("isIsolated_FixedCutTight");
+  static SG::AuxElement::Accessor<char>  AccessorIsoGradient       ("isIsolated_Gradient");
+  static SG::AuxElement::Accessor<char>  AccessorIsoGradientLoose  ("isIsolated_GradientLoose");
+  static SG::AuxElement::Accessor<float> Accessord0sig             ("d0sig");
+  static SG::AuxElement::Accessor<float> Accessorz0sintheta        ("z0sintheta");
+
   // muons
   for (auto muon: *muons){
       b_mu_n++;
@@ -281,15 +320,38 @@ EL::StatusCode Ntuple::executeSingle(string syst, bool countEvents) {
   }
 
   // electrons
+  static SG::AuxElement::Accessor<char> AccessorLHVeryLoose       ("LHVeryLoose");
+  static SG::AuxElement::Accessor<char> AccessorLHLoose           ("LHLoose");
+  static SG::AuxElement::Accessor<char> AccessorLHMedium          ("LHMedium");
+  static SG::AuxElement::Accessor<char> AccessorLHTight           ("LHTight");
+
   for (auto electron: *electrons){
       b_el_n++;
       b_el_pt       .push_back(electron->pt());
       b_el_eta      .push_back(electron->eta());
       b_el_phi      .push_back(electron->phi());
       b_el_m        .push_back(electron->m());
-      b_el_ptcone20 .push_back(electron->isolation(xAOD::Iso::ptcone20));
-      b_el_ptcone30 .push_back(electron->isolation(xAOD::Iso::ptcone30));
-      b_el_ptcone40 .push_back(electron->isolation(xAOD::Iso::ptcone40));
+
+      b_el_ptcone20    .push_back(electron->isolation(xAOD::Iso::ptcone20));
+      b_el_ptcone30    .push_back(electron->isolation(xAOD::Iso::ptcone30));
+      b_el_ptcone40    .push_back(electron->isolation(xAOD::Iso::ptcone40));
+      b_el_ptvarcone20 .push_back(electron->isolation(xAOD::Iso::ptvarcone20));
+      b_el_ptvarcone30 .push_back(electron->isolation(xAOD::Iso::ptvarcone30));
+      b_el_ptvarcone40 .push_back(electron->isolation(xAOD::Iso::ptvarcone40));
+      b_el_topoetcone20.push_back(electron->isolation(xAOD::Iso::topoetcone20));
+      b_el_topoetcone30.push_back(electron->isolation(xAOD::Iso::topoetcone30));
+      b_el_topoetcone40.push_back(electron->isolation(xAOD::Iso::topoetcone40));
+
+      b_el_IsoLooseTrackOnly.push_back(AccessorIsoLooseTrackOnly.isAvailable(*electron) ? AccessorIsoLooseTrackOnly(*electron) : -1);
+      b_el_IsoLoose         .push_back(AccessorIsoLoose         .isAvailable(*electron) ? AccessorIsoLoose         (*electron) : -1);
+      b_el_IsoTight         .push_back(AccessorIsoTight         .isAvailable(*electron) ? AccessorIsoTight         (*electron) : -1);
+      b_el_IsoGradient      .push_back(AccessorIsoGradient      .isAvailable(*electron) ? AccessorIsoGradient      (*electron) : -1);
+      b_el_IsoGradientLoose .push_back(AccessorIsoGradientLoose .isAvailable(*electron) ? AccessorIsoGradientLoose (*electron) : -1);
+
+      b_el_LHVeryLoose.push_back((AccessorLHVeryLoose.isAvailable(*electron)) ? AccessorLHVeryLoose(*electron) : -1);
+      b_el_LHLoose    .push_back((AccessorLHLoose    .isAvailable(*electron)) ? AccessorLHLoose    (*electron) : -1);
+      b_el_LHMedium   .push_back((AccessorLHMedium   .isAvailable(*electron)) ? AccessorLHMedium   (*electron) : -1);
+      b_el_LHTight    .push_back((AccessorLHTight    .isAvailable(*electron)) ? AccessorLHTight    (*electron) : -1);
   }
 
   // jets
