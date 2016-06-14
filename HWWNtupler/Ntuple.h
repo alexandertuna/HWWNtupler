@@ -51,9 +51,27 @@ public:
   std::vector<float> b_mu_eta;
   std::vector<float> b_mu_phi;
   std::vector<float> b_mu_m;
+  std::vector<float> b_mu_d0;
+  std::vector<float> b_mu_d0sig;
+  std::vector<float> b_mu_z0;
+  std::vector<float> b_mu_z0sintheta;
+  std::vector<int>   b_mu_charge;
+  std::vector<int>   b_mu_author;
+  std::vector<int>   b_mu_muonType;
   std::vector<float> b_mu_ptcone20;
   std::vector<float> b_mu_ptcone30;
   std::vector<float> b_mu_ptcone40;
+  std::vector<float> b_mu_ptvarcone20;
+  std::vector<float> b_mu_ptvarcone30;
+  std::vector<float> b_mu_ptvarcone40;
+  std::vector<float> b_mu_topoetcone20;
+  std::vector<float> b_mu_topoetcone30;
+  std::vector<float> b_mu_topoetcone40;
+  std::vector<int>   b_mu_IsoLooseTrackOnly;
+  std::vector<int>   b_mu_IsoLoose;
+  std::vector<int>   b_mu_IsoTight;
+  std::vector<int>   b_mu_IsoGradient;
+  std::vector<int>   b_mu_IsoGradientLoose;
 
   // electrons
   int                b_el_n;
@@ -61,10 +79,15 @@ public:
   std::vector<float> b_el_eta;
   std::vector<float> b_el_phi;
   std::vector<float> b_el_m;
-  std::vector<float> b_el_LHVeryLoose;
-  std::vector<float> b_el_LHLoose;
-  std::vector<float> b_el_LHMedium;
-  std::vector<float> b_el_LHTight;
+  std::vector<int>   b_el_charge;
+  std::vector<float> b_el_d0;
+  std::vector<float> b_el_d0sig;
+  std::vector<float> b_el_z0;
+  std::vector<float> b_el_z0sintheta;
+  std::vector<int>   b_el_LHVeryLoose;
+  std::vector<int>   b_el_LHLoose;
+  std::vector<int>   b_el_LHMedium;
+  std::vector<int>   b_el_LHTight;
   std::vector<float> b_el_ptcone20;
   std::vector<float> b_el_ptcone30;
   std::vector<float> b_el_ptcone40;
@@ -74,11 +97,11 @@ public:
   std::vector<float> b_el_topoetcone20;
   std::vector<float> b_el_topoetcone30;
   std::vector<float> b_el_topoetcone40;
-  std::vector<float> b_el_IsoLooseTrackOnly;
-  std::vector<float> b_el_IsoLoose;
-  std::vector<float> b_el_IsoTight;
-  std::vector<float> b_el_IsoGradient;
-  std::vector<float> b_el_IsoGradientLoose;
+  std::vector<int>   b_el_IsoLooseTrackOnly;
+  std::vector<int>   b_el_IsoLoose;
+  std::vector<int>   b_el_IsoTight;
+  std::vector<int>   b_el_IsoGradient;
+  std::vector<int>   b_el_IsoGradientLoose;
 
   // jets
   int                b_jet_ak4em_n;

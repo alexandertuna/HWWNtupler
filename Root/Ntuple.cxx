@@ -9,6 +9,7 @@
 #include <AthContainers/ConstDataVector.h>
 #include <SampleHandler/MetaFields.h>
 
+#include "xAODTracking/TrackParticlexAODHelpers.h"
 #include "xAODParticleEvent/ParticleContainer.h"
 #include <xAODTruth/TruthVertex.h>
 
@@ -119,20 +120,43 @@ EL::StatusCode Ntuple::AddTree(string syst = "")
   m_helpTree[syst]->AddEvent(m_evtDetailStr);
   m_helpTree[syst]->AddTrigger(m_trigDetailStr);
 
-  tree->Branch("mu_n",        &b_mu_n);
-  tree->Branch("mu_pt",       &b_mu_pt);
-  tree->Branch("mu_eta",      &b_mu_eta);
-  tree->Branch("mu_phi",      &b_mu_phi);
-  tree->Branch("mu_m",        &b_mu_m);
-  tree->Branch("mu_ptcone20", &b_mu_ptcone20);
-  tree->Branch("mu_ptcone30", &b_mu_ptcone30);
-  tree->Branch("mu_ptcone40", &b_mu_ptcone40);
+  tree->Branch("mu_n",                 &b_mu_n);
+  tree->Branch("mu_pt",                &b_mu_pt);
+  tree->Branch("mu_eta",               &b_mu_eta);
+  tree->Branch("mu_phi",               &b_mu_phi);
+  tree->Branch("mu_m",                 &b_mu_m);
+  tree->Branch("mu_d0",                &b_mu_d0);
+  tree->Branch("mu_d0sig",             &b_mu_d0sig);
+  tree->Branch("mu_z0",                &b_mu_z0);
+  tree->Branch("mu_z0sintheta",        &b_mu_z0sintheta);
+  tree->Branch("mu_author",            &b_mu_author);
+  tree->Branch("mu_muonType",          &b_mu_muonType);
+  tree->Branch("mu_charge",            &b_mu_charge);
+  tree->Branch("mu_ptcone20",          &b_mu_ptcone20);
+  tree->Branch("mu_ptcone30",          &b_mu_ptcone30);
+  tree->Branch("mu_ptcone40",          &b_mu_ptcone40);
+  tree->Branch("mu_ptvarcone20",       &b_mu_ptvarcone20);
+  tree->Branch("mu_ptvarcone30",       &b_mu_ptvarcone30);
+  tree->Branch("mu_ptvarcone40",       &b_mu_ptvarcone40);
+  tree->Branch("mu_topoetcone20",      &b_mu_topoetcone20);
+  tree->Branch("mu_topoetcone30",      &b_mu_topoetcone30);
+  tree->Branch("mu_topoetcone40",      &b_mu_topoetcone40);
+  tree->Branch("mu_IsoLooseTrackOnly", &b_mu_IsoLooseTrackOnly);
+  tree->Branch("mu_IsoLoose",          &b_mu_IsoLoose);
+  tree->Branch("mu_IsoTight",          &b_mu_IsoTight);
+  tree->Branch("mu_IsoGradient",       &b_mu_IsoGradient);
+  tree->Branch("mu_IsoGradientLoose",  &b_mu_IsoGradientLoose);
 
   tree->Branch("el_n",                 &b_el_n);
   tree->Branch("el_pt",                &b_el_pt);
   tree->Branch("el_eta",               &b_el_eta);
   tree->Branch("el_phi",               &b_el_phi);
   tree->Branch("el_m",                 &b_el_m);
+  tree->Branch("el_charge",            &b_el_charge);
+  tree->Branch("el_d0",                &b_el_d0);
+  tree->Branch("el_d0sig",             &b_el_d0sig);
+  tree->Branch("el_z0",                &b_el_z0);
+  tree->Branch("el_z0sintheta",        &b_el_z0sintheta);
   tree->Branch("el_LHVeryLoose",       &b_el_LHVeryLoose);
   tree->Branch("el_LHLoose",           &b_el_LHLoose);
   tree->Branch("el_LHMedium",          &b_el_LHMedium);
@@ -176,19 +200,42 @@ EL::StatusCode Ntuple::ClearBranches()
 {
 
     b_mu_n = 0;
-    b_mu_pt       .clear();
-    b_mu_eta      .clear();
-    b_mu_phi      .clear();
-    b_mu_m        .clear();
-    b_mu_ptcone20 .clear();
-    b_mu_ptcone30 .clear();
-    b_mu_ptcone40 .clear();
+    b_mu_pt               .clear();
+    b_mu_eta              .clear();
+    b_mu_phi              .clear();
+    b_mu_m                .clear();
+    b_mu_author           .clear();
+    b_mu_muonType         .clear();
+    b_mu_charge           .clear();
+    b_mu_d0               .clear();
+    b_mu_d0sig            .clear();
+    b_mu_z0               .clear();
+    b_mu_z0sintheta       .clear();
+    b_mu_ptcone20         .clear();
+    b_mu_ptcone30         .clear();
+    b_mu_ptcone40         .clear();
+    b_mu_ptvarcone20      .clear();
+    b_mu_ptvarcone30      .clear();
+    b_mu_ptvarcone40      .clear();
+    b_mu_topoetcone20     .clear();
+    b_mu_topoetcone30     .clear();
+    b_mu_topoetcone40     .clear();
+    b_mu_IsoLooseTrackOnly.clear();
+    b_mu_IsoLoose         .clear();
+    b_mu_IsoTight         .clear();
+    b_mu_IsoGradient      .clear();
+    b_mu_IsoGradientLoose .clear();
 
     b_el_n = 0;
     b_el_pt               .clear();
     b_el_eta              .clear();
     b_el_phi              .clear();
     b_el_m                .clear();
+    b_el_charge           .clear();
+    b_el_d0               .clear();
+    b_el_d0sig            .clear();
+    b_el_z0               .clear();
+    b_el_z0sintheta       .clear();
     b_el_LHVeryLoose      .clear();
     b_el_LHLoose          .clear();
     b_el_LHMedium         .clear();
@@ -304,8 +351,6 @@ EL::StatusCode Ntuple::executeSingle(string syst, bool countEvents) {
   static SG::AuxElement::Accessor<char>  AccessorIsoTight          ("isIsolated_FixedCutTight");
   static SG::AuxElement::Accessor<char>  AccessorIsoGradient       ("isIsolated_Gradient");
   static SG::AuxElement::Accessor<char>  AccessorIsoGradientLoose  ("isIsolated_GradientLoose");
-  static SG::AuxElement::Accessor<float> Accessord0sig             ("d0sig");
-  static SG::AuxElement::Accessor<float> Accessorz0sintheta        ("z0sintheta");
 
   // muons
   for (auto muon: *muons){
@@ -314,23 +359,50 @@ EL::StatusCode Ntuple::executeSingle(string syst, bool countEvents) {
       b_mu_eta      .push_back(muon->eta());
       b_mu_phi      .push_back(muon->phi());
       b_mu_m        .push_back(muon->m());
-      b_mu_ptcone20 .push_back(muon->isolation(xAOD::Iso::ptcone20));
-      b_mu_ptcone30 .push_back(muon->isolation(xAOD::Iso::ptcone30));
-      b_mu_ptcone40 .push_back(muon->isolation(xAOD::Iso::ptcone40));
+      b_mu_author   .push_back(muon->author());
+      b_mu_muonType .push_back(muon->muonType());
+      b_mu_charge   .push_back(muon->charge());
+
+      b_mu_d0        .push_back(muon->primaryTrackParticle()->d0());
+      b_mu_z0        .push_back(muon->primaryTrackParticle()->z0() + muon->primaryTrackParticle()->vz() - pv->z());
+      b_mu_d0sig     .push_back(xAOD::TrackingHelpers::d0significance(muon->primaryTrackParticle(), eventInfo->beamPosSigmaX(), eventInfo->beamPosSigmaY(), eventInfo->beamPosSigmaXY()));
+      b_mu_z0sintheta.push_back(sin(muon->primaryTrackParticle()->theta())*(muon->primaryTrackParticle()->z0() + muon->primaryTrackParticle()->vz() - pv->z()));
+
+      b_mu_ptcone20    .push_back(muon->isolation(xAOD::Iso::ptcone20));
+      b_mu_ptcone30    .push_back(muon->isolation(xAOD::Iso::ptcone30));
+      b_mu_ptcone40    .push_back(muon->isolation(xAOD::Iso::ptcone40));
+      b_mu_ptvarcone20 .push_back(muon->isolation(xAOD::Iso::ptvarcone20));
+      b_mu_ptvarcone30 .push_back(muon->isolation(xAOD::Iso::ptvarcone30));
+      b_mu_ptvarcone40 .push_back(muon->isolation(xAOD::Iso::ptvarcone40));
+      b_mu_topoetcone20.push_back(muon->isolation(xAOD::Iso::topoetcone20));
+      b_mu_topoetcone30.push_back(muon->isolation(xAOD::Iso::topoetcone30));
+      b_mu_topoetcone40.push_back(muon->isolation(xAOD::Iso::topoetcone40));
+
+      b_mu_IsoLooseTrackOnly.push_back(AccessorIsoLooseTrackOnly.isAvailable(*muon) ? AccessorIsoLooseTrackOnly(*muon) : -1);
+      b_mu_IsoLoose         .push_back(AccessorIsoLoose         .isAvailable(*muon) ? AccessorIsoLoose         (*muon) : -1);
+      b_mu_IsoTight         .push_back(AccessorIsoTight         .isAvailable(*muon) ? AccessorIsoTight         (*muon) : -1);
+      b_mu_IsoGradient      .push_back(AccessorIsoGradient      .isAvailable(*muon) ? AccessorIsoGradient      (*muon) : -1);
+      b_mu_IsoGradientLoose .push_back(AccessorIsoGradientLoose .isAvailable(*muon) ? AccessorIsoGradientLoose (*muon) : -1);
   }
 
   // electrons
-  static SG::AuxElement::Accessor<char> AccessorLHVeryLoose       ("LHVeryLoose");
-  static SG::AuxElement::Accessor<char> AccessorLHLoose           ("LHLoose");
-  static SG::AuxElement::Accessor<char> AccessorLHMedium          ("LHMedium");
-  static SG::AuxElement::Accessor<char> AccessorLHTight           ("LHTight");
+  static SG::AuxElement::Accessor<char> AccessorLHVeryLoose ("LHVeryLoose");
+  static SG::AuxElement::Accessor<char> AccessorLHLoose     ("LHLoose");
+  static SG::AuxElement::Accessor<char> AccessorLHMedium    ("LHMedium");
+  static SG::AuxElement::Accessor<char> AccessorLHTight     ("LHTight");
 
   for (auto electron: *electrons){
       b_el_n++;
-      b_el_pt       .push_back(electron->pt());
-      b_el_eta      .push_back(electron->eta());
-      b_el_phi      .push_back(electron->phi());
-      b_el_m        .push_back(electron->m());
+      b_el_pt    .push_back(electron->pt());
+      b_el_eta   .push_back(electron->eta());
+      b_el_phi   .push_back(electron->phi());
+      b_el_m     .push_back(electron->m());
+      b_el_charge.push_back(electron->charge());
+
+      b_el_d0        .push_back(electron->trackParticle()->d0());
+      b_el_z0        .push_back(electron->trackParticle()->z0() + electron->trackParticle()->vz() - pv->z());
+      b_el_d0sig     .push_back(xAOD::TrackingHelpers::d0significance(electron->trackParticle(), eventInfo->beamPosSigmaX(), eventInfo->beamPosSigmaY(), eventInfo->beamPosSigmaXY()));
+      b_el_z0sintheta.push_back(sin(electron->trackParticle()->theta())*(electron->trackParticle()->z0() + electron->trackParticle()->vz() - pv->z()));
 
       b_el_ptcone20    .push_back(electron->isolation(xAOD::Iso::ptcone20));
       b_el_ptcone30    .push_back(electron->isolation(xAOD::Iso::ptcone30));

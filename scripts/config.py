@@ -97,6 +97,7 @@ c.setalg("MuonCalibrator", { "m_name"                : "MuonCalibrator",
                              "m_inContainerName"     : "Muons", 
                              "m_outContainerName"    : "Muons_Calib", 
                              "m_outputAlgoSystNames" : "MuonCalibrator_Syst",
+                             "m_release"             : "PreRecs2016_05_23",
                              "m_debug"               : False,
                              } )
 
